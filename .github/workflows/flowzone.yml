@@ -40,5 +40,5 @@ jobs:
       protect_branch: false
       disable_versioning: true
       docker_images: |
-        ghcr.io/issenn/dnscrypt-proxy
+        ghcr.io/issenn/dnscrypt-proxy,
         docker.io/issenn/dnscrypt-proxy
