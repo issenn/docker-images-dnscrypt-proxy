@@ -1,6 +1,55 @@
 {
-    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-    "extends": [
-        "config:base"
-    ]
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "regexManagers": [
+    {
+      "fileMatch": [
+        // "^Dockerfile$",
+        // "(^|\\/)Dockerfile(\\.[:alnum:]+)?$",
+        "(^|\\/)Dockerfile(\\.[[:alnum:]]+)?$"
+        // "(^|\\/)(?:docker-)?compose[^/]*\\.ya?ml$"
+      ],
+      "matchStrings": [
+        "ARG DNSCRYPT_PROXY_VERSION[= ]v?(?<currentValue>.*?)\\n"
+        // "image: (?<depName>.*[^\\/])\\/(?<currentValue>.*?)\\n"
+      ],
+      "depNameTemplate": "DNSCrypt/dnscrypt-proxy",
+      "datasourceTemplate": "github-tags",
+      "extractVersionTemplate": "^v(?<version>.*)$"
+    }
+    // {
+    //   "fileMatch": [
+    //     "(^|\\/)(?:docker-)?compose[^/]*\\.ya?ml$"
+    //   ],
+    //   "matchStrings": [
+    //     // "image: (?<depName>.*[^\\/])\\/(?<currentValue>.*?)\\n",
+    //     "FROM (?<depName>.*[^\\/])\\/(?<currentValue>.*?)\\n"
+    //   ],
+    //   "datasourceTemplate": "docker"
+    // }
+  ],
+  "prHourlyLimit": 3,
+  "labels": [
+    "renovate",
+    "dependencies"
+  ],
+  "automergeComment": "@balena-ci I self-certify!",
+  "automergeType": "pr-comment",
+  "commitMessageExtra": "to {{{replace 'v' '' newVersion}}}",
+  "commitBody": "Update {{depName}} to {{{replace 'v' '' newVersion}}}\n\nUpdate {{depName}} from {{{replace 'v' '' currentVersion}}} to {{{replace 'v' '' newVersion}}}\n\nChange-type: {{#if (or isPatch (containsString depType 'devDependencies'))}}patch{{else}}minor{{/if}}",
+  "prConcurrentLimit": 2,
+  "branchConcurrentLimit": 2,
+  // "ignorePaths": [
+  //   "**/node_modules/**",
+  //   "**/bower_components/**",
+  //   "**/vendor/**",
+  //   "**/examples/**",
+  //   "**/__tests__/**",
+  //   "**/test/**",
+  //   "**/tests/suites/**",
+  //   "**/__fixtures__/**",
+  //   "**/Dockerfile.template"
+  // ],
+  "extends": [
+    "config:base"
+  ]
 }

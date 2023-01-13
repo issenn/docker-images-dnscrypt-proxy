@@ -1,6 +1,6 @@
 # File created using '.gitignore Generator' for Visual Studio Code: https://bit.ly/vscode-gig
-# Created by https://www.toptal.com/developers/gitignore/api/zsh,windows,visualstudiocode,vim,sublimetext,macos,jetbrains+iml,jetbrains+all,jetbrains,backup,intellij,intellij+all,intellij+iml,linux
-# Edit at https://www.toptal.com/developers/gitignore?templates=zsh,windows,visualstudiocode,vim,sublimetext,macos,jetbrains+iml,jetbrains+all,jetbrains,backup,intellij,intellij+all,intellij+iml,linux
+# Created by https://www.toptal.com/developers/gitignore/api/zsh,windows,visualstudiocode,vim,sublimetext,macos,linux,jetbrains+iml,jetbrains+all,jetbrains,intellij+iml,intellij+all,intellij,backup
+# Edit at https://www.toptal.com/developers/gitignore?templates=zsh,windows,visualstudiocode,vim,sublimetext,macos,linux,jetbrains+iml,jetbrains+all,jetbrains,intellij+iml,intellij+all,intellij,backup
 
 ### Backup ###
 *.bak
@@ -595,7 +595,8 @@ zsdoc/data
 /tests/_output/*
 !/tests/_output/.gitkeep
 
-# End of https://www.toptal.com/developers/gitignore/api/zsh,windows,visualstudiocode,vim,sublimetext,macos,jetbrains+iml,jetbrains+all,jetbrains,backup,intellij,intellij+all,intellij+iml,linux
+# End of https://www.toptal.com/developers/gitignore/api/zsh,windows,visualstudiocode,vim,sublimetext,macos,linux,jetbrains+iml,jetbrains+all,jetbrains,intellij+iml,intellij+all,intellij,backup
 
 # Custom rules (everything added below won't be overriden by 'Generate .gitignore File' if you use 'Update' option)
 
+*secrets*
