@@ -1,0 +1,35 @@
+version: "3.9"
+
+name: "dnscrypt-proxy-test"
+
+services:
+
+  server:
+    image: localhost:5000/sut
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: -config /etc/dnscrypt-proxy/dnscrypt-proxy.toml -loglevel 0
+
+  version:
+    image: localhost:5000/sut
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: -version
+
+  sut:
+    image: alpine:3.17
+    depends_on:
+      - server
+      - version
+    entrypoint: ""
+    command: >-
+      /bin/sh -c '
+      apk add --no-cache --update-cache bind-tools &&
+      dig @server -p 5053 dnssec.works +dnssec +multi | tee /dev/stderr | grep -wq NOERROR &&
+      dig @server -p 5053 fail01.dnssec.works +dnssec +multi | tee /dev/stderr | grep -qE "(SERVFAIL|no servers)" &&
+      dig @server -p 5053 fail02.dnssec.works +dnssec +multi | tee /dev/stderr | grep -qE "(SERVFAIL|no servers)" &&
+      dig @server -p 5053 fail03.dnssec.works +dnssec +multi | tee /dev/stderr | grep -qE "(SERVFAIL|no servers)" &&
+      dig @server -p 5053 fail04.dnssec.works +dnssec +multi | tee /dev/stderr | grep -qE "(SERVFAIL|no servers)"
+      '
