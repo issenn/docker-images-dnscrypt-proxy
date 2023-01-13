@@ -2,19 +2,22 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "regexManagers": [
     {
+      "description": "Update _VERSION variables in Dockerfiles",
       "fileMatch": [
         // "^Dockerfile$",
         // "(^|\\/)Dockerfile(\\.[:alnum:]+)?$",
-        "(^|\\/)Dockerfile(\\.[[:alnum:]]+)?$"
-        // "(^|\\/)(?:docker-)?compose[^/]*\\.ya?ml$"
+        // "(^|\\/)Dockerfile(\\.[[:alnum:]]+)?$",
+        "(^|\\/|\\.)Dockerfile$",
+        "(^|\\/)Dockerfile\\.[^/]*$"
       ],
       "matchStrings": [
         "ARG DNSCRYPT_PROXY_VERSION[= ]v?(?<currentValue>.*?)\\n"
-        // "image: (?<depName>.*[^\\/])\\/(?<currentValue>.*?)\\n"
       ],
       "depNameTemplate": "DNSCrypt/dnscrypt-proxy",
       "datasourceTemplate": "github-tags",
-      "extractVersionTemplate": "^v(?<version>.*)$"
+      // "extractVersionTemplate": "^v(?<version>.*)$",
+      "extractVersionTemplate": "^(?<version>.*)$",
+      "versioningTemplate": "{{#if versioning}}{{versioning}}{{else}}semver{{/if}}"
     }
     // {
     //   "fileMatch": [
