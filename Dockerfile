@@ -14,7 +14,7 @@ RUN mkdir -p /usr/local/src \
 
 # ----------------------------------------------------------------------------
 
-FROM --platform=${BUILDPLATFORM} cgr.dev/chainguard/go:1.19 AS build
+FROM --platform=${BUILDPLATFORM} cgr.dev/chainguard/go:1.20 AS build
 
 ARG TARGETOS TARGETARCH
 
