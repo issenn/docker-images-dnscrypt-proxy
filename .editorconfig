@@ -26,15 +26,19 @@ end_of_line = lf
 [VERSION]
 insert_final_newline = false
 
+[ChangeLog]
+indent_size = 8
+
 [Makefile]
 indent_style = tab
 indent_size = 8
 tab_width = 4
 
-[ChangeLog]
-indent_size = 8
-
 [Dockerfile]
+indent_style = space
+indent_size = 2
+
+[docker-bake{,.override}.{json,hcl}]
 indent_style = space
 indent_size = 2
 
@@ -45,11 +49,11 @@ indent_size = unset
 trim_trailing_whitespace = unset
 insert_final_newline = unset
 
-[.vscode/*.json]
+[*.json]
 indent_style = space
 indent_size = 2
 
-[*.{sh,zsh}]
+[.vscode/*.json]
 indent_style = space
 indent_size = 2
 
@@ -57,10 +61,10 @@ indent_size = 2
 indent_style = space
 indent_size = 2
 
-[*.{yml,yaml}]
+[*.{sh,zsh}]
 indent_style = space
 indent_size = 2
 
-[docker-bake{,.override}.{json,hcl}]
+[*.{yml,yaml}]
 indent_style = space
 indent_size = 2
