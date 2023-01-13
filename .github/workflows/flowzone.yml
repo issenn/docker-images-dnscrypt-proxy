@@ -32,7 +32,7 @@ jobs:
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
     with:
       # Disable branch protection updates whilst testing flowzone, remove before merging
-      protect_branch: false
+      # protect_branch: false
       disable_versioning: true
       docker_images: |
         ghcr.io/issenn/dnscrypt-proxy
