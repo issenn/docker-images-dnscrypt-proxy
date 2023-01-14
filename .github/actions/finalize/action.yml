@@ -105,7 +105,7 @@ runs:
       shell: bash --noprofile --norc -eo pipefail -x {0}
       env:
         SUT_IMAGE: ${{ env.SUT_IMAGE }}
-        DOCKER_IMAGES: ${{ fromJSON(inputs.json).docker_images[0] }}:${{ env.PREFIX }}${{ github.event.pull_request.head.sha || github.event.head_commit.id }}
+        DOCKER_IMAGES: ${{ fromJSON(steps.docker_images.outputs.build)[0] }}:${{ env.PREFIX }}${{ github.event.pull_request.head.sha || github.event.head_commit.id }}
       run: |
         echo "SUT_IMAGE: ${SUT_IMAGE}"
         echo "DOCKER_IMAGES: ${DOCKER_IMAGES}"
