@@ -23,7 +23,7 @@ jobs:
         with:
           node-version: 16.x
 
-      - name: Install versionist
+      - name: Install Renovate
         run: |
           npm install -g renovate@34.102.2
 
