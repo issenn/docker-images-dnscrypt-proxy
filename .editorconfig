@@ -49,7 +49,7 @@ indent_size = unset
 trim_trailing_whitespace = unset
 insert_final_newline = unset
 
-[*.json]
+[*.{json,json5}]
 indent_style = space
 indent_size = 2
 
