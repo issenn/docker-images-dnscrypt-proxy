@@ -2,7 +2,7 @@
 
 ARG BUILDPLATFORM="linux/amd64"
 
-FROM cgr.dev/chainguard/wolfi-base:latest AS prepare
+FROM cgr.dev/chainguard/alpine-base:latest AS prepare
 
 ARG DNSCRYPT_PROXY_VERSION=2.1.2
 
