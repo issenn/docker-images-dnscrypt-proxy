@@ -99,17 +99,6 @@ runs:
           latest=true
           prefix=${{ env.PREFIX }},onlatest=true
 
-    - name: Dump context
-      if: |
-        join(fromJSON(inputs.json).docker_images) != ''
-      shell: bash --noprofile --norc -eo pipefail -x {0}
-      env:
-        SUT_IMAGE: ${{ env.SUT_IMAGE }}
-        DOCKER_IMAGES: ${{ fromJSON(steps.docker_images.outputs.build)[0] }}:${{ env.PREFIX }}${{ github.event.pull_request.head.sha || github.event.head_commit.id }}
-      run: |
-        echo "SUT_IMAGE: ${SUT_IMAGE}"
-        echo "DOCKER_IMAGES: ${DOCKER_IMAGES}"
-
     - name: Login to GitHub Container Registry
       continue-on-error: true
       uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
@@ -124,10 +113,27 @@ runs:
         registry: docker.io
         username: ${{ fromJSON(inputs.secrets).DOCKERHUB_USER || fromJSON(inputs.secrets).DOCKER_REGISTRY_USER }}
         password: ${{ fromJSON(inputs.secrets).DOCKERHUB_TOKEN || fromJSON(inputs.secrets).DOCKER_REGISTRY_PASS }}
-    # - name: Publish final tags
-    #   uses: akhilerm/tag-push-action@85bf542f43f5f2060ef76262a67ee3607cb6db37
-    #   with:
-    #     src: ${{ fromJSON(inputs.json).docker_images[0] }}:${{ env.PREFIX }}${{ github.event.pull_request.head.sha || github.event.head_commit.id }}
-    #     dst: |
-    #       ${{ steps.meta1.outputs.tags }}
-    #       ${{ steps.meta2.outputs.tags }}
+    - name: Publish final tags
+      uses: akhilerm/tag-push-action@85bf542f43f5f2060ef76262a67ee3607cb6db37
+      with:
+        src: ${{ fromJSON(steps.docker_images.outputs.build)[0] }}:${{ env.PREFIX }}${{ github.event.pull_request.head.sha || github.event.head_commit.id }}
+        dst: |
+          ${{ steps.meta1.outputs.tags }}
+          ${{ steps.meta2.outputs.tags }}
+    - name: Strip docker.io prefix
+      if: (startsWith(matrix.image, 'docker.io') || !contains(matrix.image, '.'))
+      id: dockerhub
+      env:
+        IMAGE: ${{ matrix.image }}
+      shell: bash --noprofile --norc -eo pipefail -x {0}
+      run: |
+        echo "repository=${IMAGE#*/}" >> $GITHUB_OUTPUT
+    - name: Update DockerHub Description
+      if: steps.dockerhub.outputs.repository != '' && github.base_ref == github.event.repository.default_branch
+      continue-on-error: true
+      uses: peter-evans/dockerhub-description@93b93397c27ed52b4055b8c6b2f8d92456ab3c56
+      with:
+        username: ${{ fromJSON(inputs.secrets).DOCKERHUB_USER || fromJSON(inputs.secrets).DOCKER_REGISTRY_USER }}
+        password: ${{ fromJSON(inputs.secrets).DOCKERHUB_TOKEN || fromJSON(inputs.secrets).DOCKER_REGISTRY_PASS }}
+        repository: ${{ steps.dockerhub.outputs.repository }}
+        readme-filepath: ./README.md
