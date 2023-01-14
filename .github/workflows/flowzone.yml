@@ -9,11 +9,11 @@ on:
       - "main"
       - "master"
   # allow external contributions to use secrets within trusted code
-  pull_request_target:
-    types: [opened, synchronize, closed]
-    branches:
-      - "main"
-      - "master"
+  # pull_request_target:
+  #   types: [opened, synchronize, closed]
+  #   branches:
+  #     - "main"
+  #     - "master"
   push:
     tags:
       - v*.*.*
@@ -21,7 +21,8 @@ on:
 jobs:
   flowzone:
     name: Flowzone
-    uses: product-os/flowzone/.github/workflows/flowzone.yml@v0.54.0
+    # uses: product-os/flowzone/.github/workflows/flowzone.yml@v0.54.0
+    uses: issenn/flowzone/.github/workflows/flowzone.yml@v0.54.0
     # prevent duplicate workflows and only allow one `pull_request` or `pull_request_target` for
     # internal or external contributions respectively
     if: |

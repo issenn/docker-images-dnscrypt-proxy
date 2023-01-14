@@ -4,7 +4,7 @@ ARG BUILDPLATFORM="linux/amd64"
 
 FROM cgr.dev/chainguard/wolfi-base:latest AS prepare
 
-ARG DNSCRYPT_PROXY_VERSION=2.1.2
+ARG DNSCRYPT_PROXY_VERSION=2.1.1
 
 RUN apk update && apk add --no-cache --update-cache ca-certificates curl
 
