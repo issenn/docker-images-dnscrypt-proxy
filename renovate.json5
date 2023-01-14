@@ -16,7 +16,7 @@
       "depNameTemplate": "DNSCrypt/dnscrypt-proxy",
       "datasourceTemplate": "github-tags",
       // "extractVersionTemplate": "^v(?<version>.*)$",
-      "extractVersionTemplate": "^(?<version>.*)$",
+      "extractVersionTemplate": "^(?<extractVersion>.*)$",
       "versioningTemplate": "{{#if versioning}}{{versioning}}{{else}}semver{{/if}}"
     },
     {
@@ -30,7 +30,7 @@
       "depNameTemplate": "DNSCrypt/dnscrypt-proxy",
       "datasourceTemplate": "github-tags",
       "extractVersionTemplate": "^(?<version>.*)$",
-      "versioningTemplate": "{{#if versioning}}{{versioning}}{{else}}semver{{/if}}"
+      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
     }
     // {
     //   "fileMatch": [
