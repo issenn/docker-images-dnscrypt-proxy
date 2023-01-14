@@ -1,0 +1,144 @@
+---
+
+# https://docs.github.com/en/actions/creating-actions/creating-a-composite-action
+name: "Finalize custom"
+description: "Custom finalize step to run after a merge or tag"
+
+# this inputs are always provided by flowzone, so they must always be defined on the composite action
+inputs:
+  json:
+    description: "JSON stringified object containing all the inputs from the calling workflow"
+    required: true
+  secrets:
+    description: "JSON stringified object containing all the secrets from the calling workflow"
+    required: true
+
+outputs:
+  new-tag:
+    description: "New tag"
+    value: ${{ steps.new_version.outputs.tag || steps.git_describe.outputs.tag }}
+  version:
+    description: "Version"
+    value: ${{ steps.new_version.outputs.semver }}
+  docker-images:
+    description: "Docker Image"
+    value: ${{ steps.docker_images.outputs.build }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Get latest tag for current branch
+      continue-on-error: true
+      id: old_version
+      # if: |
+      #   ${{ fromJSON(inputs.json).disable_versioning }} != true
+      shell: bash --noprofile --norc -eo pipefail -x {0}
+      run: |
+        tag="$(git tag --list --sort=-version:refname "v*.*.*" --merged | head -n1)"
+        echo "semver=${tag/v/}" >> $GITHUB_OUTPUT
+        echo "tag=${tag}" >> $GITHUB_OUTPUT
+
+    - name: Git describe
+      id: git_describe
+      shell: bash --noprofile --norc -eo pipefail -x {0}
+      run: echo "tag=$(git describe --tags --always --dirty)" >> $GITHUB_OUTPUT
+
+    - name: Inspect versioned files
+      id: new_version
+      # if: |
+      #   ${{ fromJSON(inputs.json).disable_versioning }} != true
+      shell: bash --noprofile --norc -eo pipefail -x {0}
+      run: |
+        semver="$(cat < VERSION)"
+        echo "semver=${semver}" >> $GITHUB_OUTPUT
+        echo "tag=v${semver}" >> $GITHUB_OUTPUT
+
+    - name: Convert docker_images to a JSON array
+      id: docker_images
+      if: |
+        join(fromJSON(inputs.json).docker_images) != ''
+      uses: kanga333/json-array-builder@c7cd9d3a8b17cd368e9c2210bc3c16b0e2714ce5
+      env:
+        INPUT: ${{ fromJSON(inputs.json).docker_images }}
+      with:
+        cmd: bash -c "echo $INPUT | tr -d '[:space:]'"
+        separator: ","
+
+    - name: Set env vars
+      if: |
+        join(fromJSON(inputs.json).docker_images) != ''
+      shell: bash --noprofile --norc -eo pipefail -x {0}
+      run: |
+        DOCKER_IMAGES="$(echo "${{ join(fromJSON(outputs.docker-images),' ') }}" | tr " " "\n")"
+        echo "DOCKER_IMAGES<<EOF" >> $GITHUB_ENV
+        echo "${DOCKER_IMAGES}" >> $GITHUB_ENV
+        echo "EOF" >> $GITHUB_ENV
+
+    - name: Generate versioned labels and tags
+      id: meta1
+        # ${{ fromJSON(inputs.json).disable_versioning }} != true &&
+        # join(fromJSON(inputs.json).docker_images) != '' &&
+        # outputs.version != ''
+      if: |
+        join(fromJSON(inputs.json).docker_images) != ''
+      uses: docker/metadata-action@57396166ad8aefe6098280995947635806a0e6ea
+      with:
+        images: |
+          ${{ env.DOCKER_IMAGES }}
+        tags: |
+          type=raw,value=${{ github.base_ref || github.ref_name }}
+          type=raw,value=${{ outputs.new-tag }}
+          type=raw,value=${{ outputs.version }}
+        flavor: |
+          latest=true
+          prefix=${{ env.PREFIX }},onlatest=true
+
+    - name: Generate labels and tags
+      id: meta2
+        # ${{ fromJSON(inputs.json).disable_versioning }} == true &&
+        # join(fromJSON(inputs.json).docker_images) != '' &&
+        # outputs.version == ''
+      if: |
+        join(fromJSON(inputs.json).docker_images) != ''
+      uses: docker/metadata-action@57396166ad8aefe6098280995947635806a0e6ea
+      with:
+        images: |
+          ${{ env.DOCKER_IMAGES }}
+        tags: |
+          type=raw,value=${{ github.base_ref || github.ref_name }}
+          type=ref,event=tag
+          type=semver,pattern={{version}}
+        flavor: |
+          latest=auto
+          prefix=${{ env.PREFIX }},onlatest=true
+
+    - name: Dump context
+      if: |
+        join(fromJSON(inputs.json).docker_images) != ''
+      shell: bash --noprofile --norc -eo pipefail -x {0}
+      env:
+        OLD_VERSION_SEMVER: ${{ steps.old_version.outputs.semver }}
+        OLD_VERSION_TAG: ${{ steps.old_version.outputs.tag }}
+        TAG: ${{ steps.git_describe.outputs.tag }}
+        NEW_VERSION_TAG: ${{ steps.new_version.outputs.tag }}
+        NEW_VERSION_SEMVER: ${{ steps.new_version.outputs.semver }}
+        INPUTS_JSON_DOCKER_IMAGES: ${{ fromJSON(inputs.json).docker_images }}
+        STEPS_OUTPUTS_DOCKER_IMAGES: ${{ steps.docker_images.outputs.build }}
+        OUTPUTS_DOCKER_IMAGES: ${{ fromJSON(outputs.docker-images) }}
+        ENV_DOCKER_IMAGES: ${{ env.DOCKER_IMAGES }}
+        TAGS_1: ${{ steps.meta1.outputs.tags }}
+        TAGS_2: ${{ steps.meta2.outputs.tags }}
+      run: |
+        echo "OLD_VERSION_SEMVER: ${OLD_VERSION_SEMVER}"
+        echo "OLD_VERSION_TAG: ${OLD_VERSION_TAG}"
+        echo "TAG: ${TAG}"
+        echo "NEW_VERSION_TAG: ${NEW_VERSION_TAG}"
+        echo "NEW_VERSION_SEMVER: ${NEW_VERSION_SEMVER}"
+        echo "INPUTS_JSON_DOCKER_IMAGES: ${INPUTS_JSON_DOCKER_IMAGES}"
+        echo "STEPS_OUTPUTS_DOCKER_IMAGES: ${STEPS_OUTPUTS_DOCKER_IMAGES}"
+        echo "OUTPUTS_DOCKER_IMAGES: ${OUTPUTS_DOCKER_IMAGES}"
+        echo "ENV_DOCKER_IMAGES: ${ENV_DOCKER_IMAGES}"
+        echo "----------"
+        echo "TAGS_1: ${TAGS_1}"
+        echo "----------"
+        echo "TAGS_2: ${TAGS_2}"
