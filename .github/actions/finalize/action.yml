@@ -3,7 +3,6 @@
 # https://docs.github.com/en/actions/creating-actions/creating-a-composite-action
 name: "Finalize custom"
 description: "Custom finalize step to run after a merge or tag"
-
 # this inputs are always provided by flowzone, so they must always be defined on the composite action
 inputs:
   json:
@@ -12,18 +11,6 @@ inputs:
   secrets:
     description: "JSON stringified object containing all the secrets from the calling workflow"
     required: true
-
-# outputs:
-#   new_tag:
-#     description: "New tag"
-#     value: ${{ steps.new_version.outputs.tag || steps.git_describe.outputs.tag }}
-#   version:
-#     description: "Version"
-#     value: ${{ steps.new_version.outputs.semver }}
-#   docker_images:
-#     description: "Docker Image"
-#     value: ${{ steps.docker_images.outputs.build }}
-
 runs:
   using: "composite"
   steps:
@@ -76,11 +63,10 @@ runs:
 
     - name: Generate versioned labels and tags
       id: meta1
-        # ${{ fromJSON(inputs.json).disable_versioning }} != true &&
-        # join(fromJSON(inputs.json).docker_images) != '' &&
-        # steps.new_version.outputs.semver != ''
       if: |
-        join(fromJSON(inputs.json).docker_images) != ''
+        ${{ fromJSON(inputs.json).disable_versioning }} != true &&
+        join(fromJSON(inputs.json).docker_images) != '' &&
+        steps.new_version.outputs.semver != ''
       uses: docker/metadata-action@57396166ad8aefe6098280995947635806a0e6ea
       with:
         images: |
@@ -95,21 +81,22 @@ runs:
 
     - name: Generate labels and tags
       id: meta2
-        # ${{ fromJSON(inputs.json).disable_versioning }} == true &&
-        # join(fromJSON(inputs.json).docker_images) != '' &&
-        # steps.new_version.outputs.semver == ''
       if: |
-        join(fromJSON(inputs.json).docker_images) != ''
+        ${{ fromJSON(inputs.json).disable_versioning }} == true &&
+        join(fromJSON(inputs.json).docker_images) != '' &&
+        steps.new_version.outputs.semver != ''
       uses: docker/metadata-action@57396166ad8aefe6098280995947635806a0e6ea
       with:
         images: |
           ${{ env.DOCKER_IMAGES }}
         tags: |
           type=raw,value=${{ github.base_ref || github.ref_name }}
+          type=raw,value=${{ steps.new_version.outputs.tag || steps.git_describe.outputs.tag }}
+          type=raw,value=${{ steps.new_version.outputs.semver }}
           type=ref,event=tag
           type=semver,pattern={{version}}
         flavor: |
-          latest=auto
+          latest=true
           prefix=${{ env.PREFIX }},onlatest=true
 
     - name: Dump context
@@ -124,7 +111,6 @@ runs:
         NEW_VERSION_SEMVER: ${{ steps.new_version.outputs.semver }}
         INPUTS_JSON_DOCKER_IMAGES: ${{ fromJSON(inputs.json).docker_images }}
         STEPS_OUTPUTS_DOCKER_IMAGES: ${{ steps.docker_images.outputs.build }}
-        FROMJSON_STEPS_OUTPUTS_DOCKER_IMAGES: ${{ fromJSON(steps.docker_images.outputs.build) }}
         ENV_DOCKER_IMAGES: ${{ env.DOCKER_IMAGES }}
         TAGS_1: ${{ steps.meta1.outputs.tags }}
         TAGS_2: ${{ steps.meta2.outputs.tags }}
@@ -136,7 +122,6 @@ runs:
         echo "NEW_VERSION_SEMVER: ${NEW_VERSION_SEMVER}"
         echo "INPUTS_JSON_DOCKER_IMAGES: ${INPUTS_JSON_DOCKER_IMAGES}"
         echo "STEPS_OUTPUTS_DOCKER_IMAGES: ${STEPS_OUTPUTS_DOCKER_IMAGES}"
-        echo "FROMJSON_STEPS_OUTPUTS_DOCKER_IMAGES: ${FROMJSON_STEPS_OUTPUTS_DOCKER_IMAGES}"
         echo "ENV_DOCKER_IMAGES: ${ENV_DOCKER_IMAGES}"
         echo "----------"
         echo "TAGS_1: ${TAGS_1}"
