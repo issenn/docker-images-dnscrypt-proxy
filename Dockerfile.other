@@ -2,7 +2,7 @@
 
 # ARG BUILDPLATFORM="linux/amd64"
 
-FROM alpine:3.17 AS prepare
+FROM --platform=${BUILDPLATFORM} alpine:3.17 AS prepare
 
 ARG DNSCRYPT_PROXY_VERSION=2.1.2
 
@@ -46,7 +46,7 @@ COPY dnscrypt-proxy.toml ./
 # ----------------------------------------------------------------------------
 
 # hadolint ignore=DL3007
-FROM scratch
+FROM --platform=${BUILDPLATFORM} scratch
 
 COPY --from=build /etc/passwd /etc/group /etc/
 COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/

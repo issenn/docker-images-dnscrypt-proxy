@@ -1,9 +1,9 @@
 # syntax = docker/dockerfile:1
 
-# ARG BUILDPLATFORM="linux/amd64"
+ARG BUILDPLATFORM="linux/amd64"
 
 # https://github.com/orgs/chainguard-images/packages
-FROM cgr.dev/chainguard/wolfi-base:latest-20230115 AS prepare
+FROM --platform=${BUILDPLATFORM} cgr.dev/chainguard/wolfi-base:latest-20230115 AS prepare
 
 ARG DNSCRYPT_PROXY_VERSION=2.1.2
 
@@ -46,7 +46,7 @@ COPY dnscrypt-proxy.toml ./
 
 # ----------------------------------------------------------------------------
 
-FROM cgr.dev/chainguard/static:latest-glibc-20230115
+FROM --platform=${BUILDPLATFORM} cgr.dev/chainguard/static:latest-glibc-20230115
 
 COPY --from=build /etc/passwd /etc/group /etc/
 COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
