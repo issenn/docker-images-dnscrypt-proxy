@@ -14,7 +14,7 @@ target "main" {
   platforms = [
     "linux/amd64",
     "linux/arm64",
-    "linux/arm64/v8",
+    "darwin/amd64",
     "linux/386",
     "linux/arm/v6",
     "linux/arm/v7",
@@ -35,7 +35,7 @@ target "darwin" {
 }
 
 target "other" {
-  dockerfile = "Dockerfile.other"
   platforms = [
+    "linux/arm64/v8",
   ]
 }
