@@ -13,6 +13,7 @@ target "main" {
   dockerfile = "Dockerfile"
   platforms = [
     "linux/amd64",
+    "linux/arm64/v8",
     "linux/arm64"
   ]
 }
@@ -20,7 +21,8 @@ target "main" {
 target "darwin" {
   dockerfile = "Dockerfile.darwin"
   platforms = [
-    "darwin/amd64"
+    "darwin/amd64",
+    "darwin/arm64"
   ]
 }
 
