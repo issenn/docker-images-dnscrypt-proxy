@@ -1,6 +1,6 @@
 # syntax = docker/dockerfile:1
 
-# ARG BUILDPLATFORM="linux/amd64"
+ARG BUILDPLATFORM="linux/amd64"
 
 FROM --platform=${BUILDPLATFORM} alpine:3.17 AS prepare
 
@@ -45,7 +45,6 @@ COPY dnscrypt-proxy.toml ./
 
 # ----------------------------------------------------------------------------
 
-# hadolint ignore=DL3007
 FROM --platform=${BUILDPLATFORM} scratch
 
 COPY --from=build /etc/passwd /etc/group /etc/
