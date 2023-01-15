@@ -5,37 +5,46 @@ variable "TAG" {
 group "default" {
   targets = [
     "main",
-    // "other"
+    // "other",
+    "darwin",
   ]
 }
 
 target "main" {
   dockerfile = "Dockerfile"
   platforms = [
-    "linux/amd64",
-    "linux/arm64",
-    "darwin/amd64",
     "linux/386",
+    "linux/amd64",
     "linux/arm/v6",
     "linux/arm/v7",
+    "linux/arm64",
+    "linux/mips64",
+    "linux/mips64le",
     "linux/ppc64le",
     "linux/s390x",
     "linux/riscv64",
-    "linux/mips64le",
-    "linux/mips64"
   ]
 }
 
 target "darwin" {
-  dockerfile = "Dockerfile.darwin"
   platforms = [
+    "darwin/386",
     "darwin/amd64",
-    "darwin/arm64"
+    "darwin/arm",
+    "darwin/arm64",
   ]
 }
 
 target "other" {
   platforms = [
-    "linux/arm64/v8",
+    "android/386",
+    "android/amd64",
+    "android/arm",
+    "android/arm64",
+    // "linux/arm",
+    // "linux/arm64/v8",
+    "linux/mips",
+    "linux/mipsle",
+    "linux/ppc64",
   ]
 }
