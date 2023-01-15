@@ -5,16 +5,16 @@ variable "TAG" {
 group "default" {
   targets = [
     "main",
-    "other"
+    // "other"
   ]
 }
 
 target "main" {
   dockerfile = "Dockerfile"
   platforms = [
-    "linux/amd64",
+    // "linux/amd64",
     "linux/arm64/v8",
-    "linux/arm64"
+    // "linux/arm64"
   ]
 }
 
