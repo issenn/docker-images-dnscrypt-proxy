@@ -22,7 +22,7 @@ RUN mkdir -p /usr/local/src \
 
 FROM --platform=${BUILDPLATFORM} cgr.dev/chainguard/go:1.19 AS build
 
-ARG TARGETOS TARGETARCH
+ARG TARGETOS TARGETARCH TARGETVARIANT
 
 COPY --from=prepare /etc/passwd /etc/group /etc/
 COPY --from=prepare /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
@@ -36,7 +36,7 @@ RUN --mount=type=cache,target=/home/nonroot/.cache/go-build,uid=65532,gid=65532 
     --mount=type=cache,target=/go/pkg \
         CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go mod vendor \
         && cd dnscrypt-proxy \
-        && CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -v -ldflags="-s -w" -mod vendor
+        && CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH GOARM=$TARGETVARIANT go build -v -ldflags="-s -w" -mod vendor
 
 WORKDIR /etc/dnscrypt-proxy
 
