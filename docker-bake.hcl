@@ -4,8 +4,8 @@ variable "TAG" {
 
 group "default" {
   targets = [
-    "main",
-    // "other"
+    // "main",
+    "other"
   ]
 }
 
@@ -13,8 +13,7 @@ target "main" {
   dockerfile = "Dockerfile"
   platforms = [
     "linux/amd64",
-    "linux/arm64",
-    "linux/386"
+    "linux/arm64"
   ]
 }
 
@@ -34,8 +33,8 @@ target "other" {
     "linux/arm/v7",
     "linux/ppc64le",
     "linux/s390x",
-    "linux/riscv64",
-    "linux/mips64le",
-    "linux/mips64",
+    // "linux/riscv64",
+    // "linux/mips64le",
+    // "linux/mips64"
   ]
 }
