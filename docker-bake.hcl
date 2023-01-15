@@ -5,8 +5,8 @@ variable "TAG" {
 group "default" {
   targets = [
     "main",
-    // "other",
-    "darwin",
+    "other",
+    // "darwin",
   ]
 }
 
@@ -28,7 +28,6 @@ target "main" {
 
 target "darwin" {
   platforms = [
-    "darwin/386",
     "darwin/amd64",
     "darwin/arm",
     "darwin/arm64",
@@ -37,10 +36,10 @@ target "darwin" {
 
 target "other" {
   platforms = [
-    "android/386",
-    "android/amd64",
-    "android/arm",
-    "android/arm64",
+    // "android/386",
+    // "android/amd64",
+    // "android/arm",
+    // "android/arm64",
     // "linux/arm",
     // "linux/arm64/v8",
     "linux/mips",
