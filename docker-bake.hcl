@@ -4,8 +4,8 @@ variable "TAG" {
 
 group "default" {
   targets = [
-    // "main",
-    // "other",
+    "main",
+    "other",
     "darwin",
   ]
 }
@@ -28,8 +28,8 @@ target "main" {
 
 target "darwin" {
   platforms = [
-    // "darwin/amd64",
-    "darwin/arm",
+    "darwin/amd64",
+    // "darwin/arm",
     "darwin/arm64",
   ]
 }
