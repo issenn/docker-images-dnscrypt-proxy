@@ -36,14 +36,14 @@ target "darwin" {
 
 target "other" {
   platforms = [
-    // "android/386",
-    // "android/amd64",
-    // "android/arm",
-    // "android/arm64",
+    "android/386",
+    "android/amd64",
+    "android/arm",
+    "android/arm64",
     // "linux/arm",
     // "linux/arm64/v8",
-    "linux/mips",
-    "linux/mipsle",
-    "linux/ppc64",
+    // "linux/mips",
+    // "linux/mipsle",
+    // "linux/ppc64",
   ]
 }
