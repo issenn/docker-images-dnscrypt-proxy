@@ -1,13 +1,19 @@
-# syntax = docker/dockerfile:experimental
+# syntax = docker/dockerfile:1
 
-# ARG BUILDPLATFORM="linux/amd64"
+ARG BUILDPLATFORM="linux/amd64"
 
-FROM cgr.dev/chainguard/wolfi-base:latest AS prepare
+# https://github.com/orgs/chainguard-images/packages
+FROM --platform=${BUILDPLATFORM} cgr.dev/chainguard/wolfi-base:latest-20230115 AS prepare
 
 ARG DNSCRYPT_PROXY_VERSION=2.1.2
 
-RUN apk update && apk add --no-cache --update-cache ca-certificates curl
+RUN apk update && \
+    apk add --no-cache --update-cache \
+      ca-certificates~=20220614 \
+      curl~=7.87.0 \
+      bash~=5.2
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN mkdir -p /usr/local/src \
     && curl -fsSL "https://github.com/DNSCrypt/dnscrypt-proxy/archive/${DNSCRYPT_PROXY_VERSION}.tar.gz" \
     | tar -zxC /usr/local/src --strip 1
@@ -25,6 +31,7 @@ COPY --from=prepare --chown=nonroot:nonroot /usr/local/src /usr/local/src
 
 WORKDIR /usr/local/src
 
+# hadolint ignore=DL3003
 RUN --mount=type=cache,target=/home/nonroot/.cache/go-build,uid=65532,gid=65532 \
     --mount=type=cache,target=/go/pkg \
         CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go mod vendor \
@@ -39,8 +46,7 @@ COPY dnscrypt-proxy.toml ./
 
 # ----------------------------------------------------------------------------
 
-# hadolint ignore=DL3007
-FROM cgr.dev/chainguard/static:latest-glibc
+FROM --platform=${BUILDPLATFORM} cgr.dev/chainguard/static:latest-glibc-20230115
 
 COPY --from=build /etc/passwd /etc/group /etc/
 COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
