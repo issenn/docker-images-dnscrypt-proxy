@@ -12,9 +12,9 @@ group "default" {
 target "main" {
   dockerfile = "Dockerfile"
   platforms = [
-    // "linux/amd64",
+    "linux/amd64",
     "linux/arm64/v8",
-    // "linux/arm64"
+    "linux/arm64"
   ]
 }
 
