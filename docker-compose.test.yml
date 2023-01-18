@@ -9,6 +9,18 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        PACKAGE_NAME: dnscrypt-proxy
+        PACKAGE_VERSION: 2.1.2
+        PACKAGE_VERSION_PREFIX: ""
+        PACKAGE_URL: https://github.com/DNSCrypt/dnscrypt-proxy
+        PACKAGE_SOURCE_URL: https://github.com/DNSCrypt/dnscrypt-proxy/archive/2.1.2.tar.gz
+        PACKAGE_HEAD_URL: https://github.com/DNSCrypt/dnscrypt-proxy.git
+        PACKAGE_HEAD: false
+        GO111MODULE: on
+        GOPROXY: https://proxy.golang.org,direct,direct
+        CGO_ENABLED: 0
+        BUILD_FLAGS: "-v"
     command: -config /etc/dnscrypt-proxy/dnscrypt-proxy.toml -loglevel 0
 
   version:
@@ -16,6 +28,18 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        PACKAGE_NAME: dnscrypt-proxy
+        PACKAGE_VERSION: 2.1.2
+        PACKAGE_VERSION_PREFIX: ""
+        PACKAGE_URL: https://github.com/DNSCrypt/dnscrypt-proxy
+        PACKAGE_SOURCE_URL: https://github.com/DNSCrypt/dnscrypt-proxy/archive/2.1.2.tar.gz
+        PACKAGE_HEAD_URL: https://github.com/DNSCrypt/dnscrypt-proxy.git
+        PACKAGE_HEAD: false
+        GO111MODULE: on
+        GOPROXY: https://proxy.golang.org,direct,direct
+        CGO_ENABLED: 0
+        BUILD_FLAGS: "-v"
     command: -version
 
   sut:
