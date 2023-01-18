@@ -27,6 +27,10 @@ variable "GO111MODULE" {
 }
 
 variable "GOPROXY" {
+  default = "https://proxy.golang.org,direct,direct"
+}
+
+variable "GOPROXY_CN" {
   default = "https://goproxy.cn,https://proxy.golang.com.cn,https://mirrors.aliyun.com/goproxy/,https://athens.azurefd.net,direct"
 }
 
@@ -44,19 +48,6 @@ group "default" {
     "other",
     "darwin",
   ]
-  args = {
-    PACKAGE_NAME = "dnscrypt-proxy"
-    PACKAGE_VERSION = "2.1.2"
-    PACKAGE_VERSION_PREFIX = PACKAGE_VERSION_PREFIX
-    PACKAGE_URL = "https://github.com/DNSCrypt/dnscrypt-proxy"
-    PACKAGE_SOURCE_URL = "https://github.com/DNSCrypt/dnscrypt-proxy/archive/2.1.2.tar.gz"
-    PACKAGE_HEAD_URL = "https://github.com/DNSCrypt/dnscrypt-proxy.git"
-    PACKAGE_HEAD = PACKAGE_HEAD
-    GO111MODULE = GO111MODULE
-    GOPROXY = GOPROXY
-    CGO_ENABLED = CGO_ENABLED
-    BUILD_FLAGS = BUILD_FLAGS
-  }
 }
 
 target "main" {
@@ -73,6 +64,19 @@ target "main" {
     "linux/s390x",
     "linux/riscv64",
   ]
+  args = {
+    PACKAGE_NAME = "dnscrypt-proxy"
+    PACKAGE_VERSION = "2.1.2"
+    PACKAGE_VERSION_PREFIX = PACKAGE_VERSION_PREFIX
+    PACKAGE_URL = "https://github.com/DNSCrypt/dnscrypt-proxy"
+    PACKAGE_SOURCE_URL = "https://github.com/DNSCrypt/dnscrypt-proxy/archive/2.1.2.tar.gz"
+    PACKAGE_HEAD_URL = "https://github.com/DNSCrypt/dnscrypt-proxy.git"
+    PACKAGE_HEAD = PACKAGE_HEAD
+    GO111MODULE = GO111MODULE
+    GOPROXY = GOPROXY
+    CGO_ENABLED = CGO_ENABLED
+    BUILD_FLAGS = BUILD_FLAGS
+  }
 }
 
 target "darwin" {
@@ -81,6 +85,19 @@ target "darwin" {
     // "darwin/arm",
     "darwin/arm64",
   ]
+  args = {
+    PACKAGE_NAME = "dnscrypt-proxy"
+    PACKAGE_VERSION = "2.1.2"
+    PACKAGE_VERSION_PREFIX = PACKAGE_VERSION_PREFIX
+    PACKAGE_URL = "https://github.com/DNSCrypt/dnscrypt-proxy"
+    PACKAGE_SOURCE_URL = "https://github.com/DNSCrypt/dnscrypt-proxy/archive/2.1.2.tar.gz"
+    PACKAGE_HEAD_URL = "https://github.com/DNSCrypt/dnscrypt-proxy.git"
+    PACKAGE_HEAD = PACKAGE_HEAD
+    GO111MODULE = GO111MODULE
+    GOPROXY = GOPROXY
+    CGO_ENABLED = CGO_ENABLED
+    BUILD_FLAGS = BUILD_FLAGS
+  }
 }
 
 target "other" {
@@ -91,6 +108,19 @@ target "other" {
     "linux/mipsle",
     "linux/ppc64",
   ]
+  args = {
+    PACKAGE_NAME = "dnscrypt-proxy"
+    PACKAGE_VERSION = "2.1.2"
+    PACKAGE_VERSION_PREFIX = PACKAGE_VERSION_PREFIX
+    PACKAGE_URL = "https://github.com/DNSCrypt/dnscrypt-proxy"
+    PACKAGE_SOURCE_URL = "https://github.com/DNSCrypt/dnscrypt-proxy/archive/2.1.2.tar.gz"
+    PACKAGE_HEAD_URL = "https://github.com/DNSCrypt/dnscrypt-proxy.git"
+    PACKAGE_HEAD = PACKAGE_HEAD
+    GO111MODULE = GO111MODULE
+    GOPROXY = GOPROXY
+    CGO_ENABLED = CGO_ENABLED
+    BUILD_FLAGS = BUILD_FLAGS
+  }
 }
 
 target "android" {
