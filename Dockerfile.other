@@ -1,41 +1,60 @@
-# syntax = docker/dockerfile:1
+# syntax=docker/dockerfile:1
 
 ARG BUILDPLATFORM="linux/amd64"
 
 FROM --platform=${BUILDPLATFORM} alpine:3.17 AS prepare
 
-ARG DNSCRYPT_PROXY_VERSION=2.1.2
-
 RUN apk update && \
     apk add --no-cache --update-cache \
-      ca-certificates~=20220614 \
-      curl~=7.87.0 \
-      bash~=5.2
+    curl~=7.87.0 \
+    sed~=4.9 \
+    git~=2.38.2 \
+    # go~=1.19.5 \
+    bash~=5.2.15 \
+    ca-certificates~=20220614 && \
+    sync
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-RUN mkdir -p /usr/local/src \
-    && curl -fsSL "https://github.com/DNSCrypt/dnscrypt-proxy/archive/${DNSCRYPT_PROXY_VERSION}.tar.gz" \
-    | tar -zxC /usr/local/src --strip 1
+
+ARG DNSCRYPT_PROXY_VERSION=2.1.2
+
+RUN \
+    mkdir -p /usr/local/src/dnscrypt-proxy && \
+    curl -fsSL "https://github.com/DNSCrypt/dnscrypt-proxy/archive/${DNSCRYPT_PROXY_VERSION}.tar.gz" \
+    | tar -zxC /usr/local/src/dnscrypt-proxy --strip 1
+    # git clone --single-branch "https://github.com/DNSCrypt/dnscrypt-proxy.git" /usr/local/src/dnscrypt-proxy && \
+    # git -C /usr/local/src/dnscrypt-proxy checkout tags/${DNSCRYPT_PROXY_VERSION}
 
 # ----------------------------------------------------------------------------
 
-FROM --platform=${BUILDPLATFORM} golang:1.19.5-alpine AS build
+FROM --platform=${BUILDPLATFORM} golang:1.19.5-alpine3.17 AS build
 
 ARG TARGETOS TARGETARCH TARGETVARIANT
+ARG CGO_ENABLED=0
+ARG BUILD_FLAGS="-v"
+ARG GO111MODULE
+ARG GOPROXY
 
 COPY --from=prepare /etc/passwd /etc/group /etc/
 COPY --from=prepare /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
 COPY --from=prepare --chown=nonroot:nonroot /usr/local/src /usr/local/src
 
-WORKDIR /usr/local/src
+WORKDIR /usr/local/src/dnscrypt-proxy
+
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
+ENV GOOS=${TARGETOS} \
+    GOARCH=${TARGETARCH}
 
 # hadolint ignore=DL3003
 RUN --mount=type=cache,target=/home/nonroot/.cache/go-build,uid=65532,gid=65532 \
     --mount=type=cache,target=/go/pkg \
-        CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go mod vendor \
-        && cd dnscrypt-proxy \
-        && CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH GOARM=${TARGETVARIANT#v} go build -v -ldflags="-s -w" -mod vendor
+        TARGETVARIANT=$(echo -n "${TARGETVARIANT}" | sed 's/v//g') && \
+        CGO_ENABLED=${CGO_ENABLED} GOOS=${TARGETOS} GOARCH=${TARGETARCH} GOARM=${TARGETVARIANT} go mod vendor && \
+        cd dnscrypt-proxy && \
+        CGO_ENABLED=${CGO_ENABLED} GOOS=${TARGETOS} GOARCH=${TARGETARCH} GOARM=${TARGETVARIANT} go build -v -ldflags="-s -w" -mod vendor && \
+        sync
 
 WORKDIR /etc/dnscrypt-proxy
 
@@ -50,7 +69,7 @@ FROM --platform=${BUILDPLATFORM} scratch
 COPY --from=build /etc/passwd /etc/group /etc/
 COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
-COPY --from=build /usr/local/src/dnscrypt-proxy/dnscrypt-proxy /usr/local/bin/
+COPY --from=build /usr/local/src/dnscrypt-proxy/dnscrypt-proxy/dnscrypt-proxy /usr/local/bin/
 COPY --from=build --chown=nobody:nogroup /etc/dnscrypt-proxy /etc/dnscrypt-proxy
 
 # TODO: switch to 'nonroot' user
