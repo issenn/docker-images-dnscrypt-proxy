@@ -15,7 +15,7 @@ variable "PACKAGE_VERSION" {
 }
 
 variable "PACKAGE_VERSION_PREFIX" {
-  default = null
+  default = ""
 }
 
 variable "PACKAGE_HEAD" {
