@@ -4,6 +4,9 @@
     {
       "description": "Update _VERSION variables in Dockerfiles",
       "fileMatch": [
+        // "^Dockerfile$",
+        // "(^|\\/)Dockerfile(\\.[:alnum:]+)?$",
+        // "(^|\\/)Dockerfile(\\.[[:alnum:]]+)?$",
         "(^|\\/|\\.)Dockerfile$",
         "(^|\\/)Dockerfile\\.[^/]*$"
       ],
@@ -12,6 +15,7 @@
       ],
       "depNameTemplate": "DNSCrypt/dnscrypt-proxy",
       "datasourceTemplate": "github-tags",
+      // "extractVersionTemplate": "^v(?<version>.*)$",
       "extractVersionTemplate": "^(?<extractVersion>.*)$",
       "versioningTemplate": "{{#if versioning}}{{versioning}}{{else}}semver{{/if}}"
     },
@@ -28,18 +32,40 @@
       "extractVersionTemplate": "^(?<version>.*)$",
       "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
     }
+    // {
+    //   "fileMatch": [
+    //     "(^|\\/)(?:docker-)?compose[^/]*\\.ya?ml$"
+    //   ],
+    //   "matchStrings": [
+    //     // "image: (?<depName>.*[^\\/])\\/(?<currentValue>.*?)\\n",
+    //     "FROM (?<depName>.*[^\\/])\\/(?<currentValue>.*?)\\n"
+    //   ],
+    //   "datasourceTemplate": "docker"
+    // }
   ],
   "prHourlyLimit": 3,
   "labels": [
     "renovate",
     "dependencies"
   ],
+  // "automerge": true,
   "automergeType": "pr-comment",
   "automergeComment": "@renovate I self-certify!",
   "commitMessageExtra": "to {{{replace 'v' '' newVersion}}}",
   "commitBody": "Update {{depName}} to {{{replace 'v' '' newVersion}}}\n\nUpdate {{depName}} from {{{replace 'v' '' currentVersion}}} to {{{replace 'v' '' newVersion}}}\n\nChange-type: {{#if (or isPatch (containsString depType 'devDependencies'))}}patch{{else}}minor{{/if}}",
   "prConcurrentLimit": 2,
   "branchConcurrentLimit": 2,
+  // "ignorePaths": [
+  //   "**/node_modules/**",
+  //   "**/bower_components/**",
+  //   "**/vendor/**",
+  //   "**/examples/**",
+  //   "**/__tests__/**",
+  //   "**/test/**",
+  //   "**/tests/suites/**",
+  //   "**/__fixtures__/**",
+  //   "**/Dockerfile.template"
+  // ],
   "extends": [
     "config:base"
   ]
