@@ -17,8 +17,9 @@ services:
         PACKAGE_SOURCE_URL: https://github.com/DNSCrypt/dnscrypt-proxy/archive/2.1.2.tar.gz
         PACKAGE_HEAD_URL: https://github.com/DNSCrypt/dnscrypt-proxy.git
         PACKAGE_HEAD: false
+        CACHEBUST: https://api.github.com/repos/issenn/docker-images-dnscrypt-proxy/git/refs/heads/master
         GO111MODULE: on
-        GOPROXY: https://proxy.golang.org,direct,direct
+        GOPROXY: https://proxy.golang.org,direct
         CGO_ENABLED: 0
         BUILD_FLAGS: "-v"
     command: -config /etc/dnscrypt-proxy/dnscrypt-proxy.toml -loglevel 0
@@ -36,8 +37,9 @@ services:
         PACKAGE_SOURCE_URL: https://github.com/DNSCrypt/dnscrypt-proxy/archive/2.1.2.tar.gz
         PACKAGE_HEAD_URL: https://github.com/DNSCrypt/dnscrypt-proxy.git
         PACKAGE_HEAD: false
+        CACHEBUST: https://api.github.com/repos/issenn/docker-images-dnscrypt-proxy/git/refs/heads/master
         GO111MODULE: on
-        GOPROXY: https://proxy.golang.org,direct,direct
+        GOPROXY: https://proxy.golang.org,direct
         CGO_ENABLED: 0
         BUILD_FLAGS: "-v"
     command: -version

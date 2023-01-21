@@ -10,8 +10,12 @@ variable "BUILDKIT_PROGRESS" {
   default = "auto"
 }
 
+variable "CACHEBUST" {
+  default = 0
+}
+
 variable "PACKAGE_VERSION" {
-  default = "0.0.0"
+  default = ""
 }
 
 variable "PACKAGE_VERSION_PREFIX" {
@@ -81,6 +85,7 @@ target "main" {
     PACKAGE_SOURCE_URL = "https://github.com/DNSCrypt/dnscrypt-proxy/archive/2.1.2.tar.gz"
     PACKAGE_HEAD_URL = "https://github.com/DNSCrypt/dnscrypt-proxy.git"
     PACKAGE_HEAD = PACKAGE_HEAD
+    CACHEBUST = "https://api.github.com/repos/issenn/docker-images-dnscrypt-proxy/git/refs/heads/master"
     GO111MODULE = GO111MODULE
     GOPROXY = GOPROXY
     GOSUMDB = GOSUMDB
